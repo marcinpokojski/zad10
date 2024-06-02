@@ -14,7 +14,7 @@ public class PrescriptionController : ControllerBase
         _prescriptionService = prescriptionService;
     }
     [HttpPost]
-    public async Task<IActionResult> AddPrescription(PrescriptionToAdd prescriptionToAdd)
+    public async Task<IActionResult> AddPrescription([FromBody] PrescriptionToAdd prescriptionToAdd)
     {
         var result = await _prescriptionService.AddPrescription(prescriptionToAdd);
         if (result.Code == 200)
@@ -22,7 +22,9 @@ public class PrescriptionController : ControllerBase
             return Ok();
         }
 
-        return NotFound();
+        return NotFound(result.Message);
     }
+    
+    
     
 }

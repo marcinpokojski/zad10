@@ -2,8 +2,6 @@ namespace zad10.DTOs;
 
 public class DoctorToAdd
 {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Email { get; set; }
     public int idDoctor { get; set; }
+    public string FirstName { get; set; }
 }

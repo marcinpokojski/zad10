@@ -17,7 +17,7 @@ public class PrescriptionService : IPrescriptionService
     }
     public async  Task<ResultDTO> AddPrescription(PrescriptionToAdd prescriptionToAdd)
     {
-         _patientRepository.AddNewPatient(prescriptionToAdd);
+         await _patientRepository.AddNewPatient(prescriptionToAdd);
         //true to git
         var ifMedicamentExist = await _medicamentRepository.IfMedicamentExist(prescriptionToAdd);
 
@@ -44,5 +44,10 @@ public class PrescriptionService : IPrescriptionService
 
 
 
+    }
+
+    public Task<ResultDTO> GetPatientInfo(int id)
+    {
+        return _patientRepository.GetPatientInfo(id);
     }
 }

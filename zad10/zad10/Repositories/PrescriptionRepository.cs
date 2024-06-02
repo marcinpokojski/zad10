@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using zad10.Context;
 using zad10.DTOs;
 using zad10.Entities;
@@ -7,6 +8,7 @@ namespace zad10.Repositories;
 public class PrescriptionRepository : IPrescriptionRepository
 {
     private readonly MsdbContext _msdbContext;
+    private IPrescriptionRepository _prescriptionRepositoryImplementation;
 
     public PrescriptionRepository(MsdbContext msdbContext)
     {
@@ -14,12 +16,15 @@ public class PrescriptionRepository : IPrescriptionRepository
     }
     public async  Task<int> AddNewPrescription(PrescriptionToAdd prescriptionToAdd)
     {
-        if (prescriptionToAdd.DueDate >= prescriptionToAdd.Date)
-        {
-            Prescription prescription = new Prescription()
+        // if (prescriptionToAdd.DueDate < prescriptionToAdd.Date)
+        // {
+        //     return -1;
+        // }
+
+        Prescription prescription = new Prescription()
             {
-                Date = prescriptionToAdd.Date,
-                DueDate = prescriptionToAdd.DueDate,
+                //Date = "2022-12-32"
+                //DueDate = prescriptionToAdd.DueDate,
                 IdPatient = prescriptionToAdd.patient.IdPatient,
                 IdDoctor = prescriptionToAdd.doctor.idDoctor
 
@@ -39,12 +44,13 @@ public class PrescriptionRepository : IPrescriptionRepository
                     Details = medicament.Description
                 };
                 _msdbContext.PrescriptionMedicaments.Add(prescriptionMedicament);
-                await _msdbContext.SaveChangesAsync();
+                
             }
+            await _msdbContext.SaveChangesAsync();
+            return 1;
         }
-
-        return 1;
-    }
+       
+    
 
     public async  Task<bool> CheckIfMax10Medicaments(PrescriptionToAdd prescriptionToAdd)
     {

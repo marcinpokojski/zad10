@@ -22,11 +22,57 @@ public class PatientRepository : IPatientRepository
         {
             Patient patient = new Patient()
             {
-                IdPatient = prescriptionToAdd.patient.IdPatient,
                 FirstName = prescriptionToAdd.patient.FirstName
             };
             await _msdbContext.Patients.AddAsync(patient);
         }
+    }
+
+    public async Task<ResultDTO> GetPatientInfo(int id)
+    {
+        //TUTAJ NIE DZIALA!!!!!!!!!!!!
+        var patient = await _msdbContext.Patients
+            .Include(p => p.Prescriptions)
+            .ThenInclude(p2 => p2.Doctor)
+            .Include(p => p.Prescriptions)
+            .ThenInclude(p => p.PrescriptionMedicaments)
+            .ThenInclude(pm => pm.Medicament)
+            .FirstOrDefaultAsync(p => p.IdPatient == id);
+        
+        
+
+        if (patient == null)
+        {
+            return new ResultDTO(404, "Patient not found");
+        }
+
+        var patientDTO = new PatientDTO
+        {
+            IdPatient = patient.IdPatient,
+            FirstName = patient.FirstName,
+            LastName = patient.LastName,
+            Prescriptions = patient.Prescriptions
+                .OrderBy(p => p.DueDate)
+                .Select(p => new PrescriptionDTO
+                {
+                    IdPrescription = p.IdPrescription,
+                    Date = p.Date,
+                    DueDate = p.DueDate,
+                    Medicaments = p.PrescriptionMedicaments.Select(pm => new MedicamentsToAdd()
+                    {
+                        idMedicament = pm.Medicament.IdMedicament, 
+                        Dose = pm.Dose,
+                        Description = pm.Medicament.Description 
+                    }).ToList(),
+                    dOCTOR = new DoctorToAdd()
+                    {
+                       idDoctor = p.Doctors.IdDoctor, 
+                        FirstName = p.Doctors.FirstName
+                    }
+                }).ToList()
+        };
+
+        return new ResultDTO(200, "git", patientDTO);
     }
 
 }
