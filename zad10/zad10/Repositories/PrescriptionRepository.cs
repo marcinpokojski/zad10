@@ -54,7 +54,7 @@ public class PrescriptionRepository : IPrescriptionRepository
 
     public async  Task<bool> CheckIfMax10Medicaments(PrescriptionToAdd prescriptionToAdd)
     {
-        var length = prescriptionToAdd.Medicaments.Count();
+        var length = prescriptionToAdd.Medicaments.Count;
         if (length > 10)
         {
             return false;
