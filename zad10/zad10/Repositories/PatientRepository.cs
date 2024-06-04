@@ -14,7 +14,7 @@ public class PatientRepository : IPatientRepository
         _msdbContext = msdbContext;
     }
 
-    public async Task AddNewPatient(PrescriptionToAdd prescriptionToAdd)
+    public async Task<int> AddNewPatient(PrescriptionToAdd prescriptionToAdd)
     {
         var result = await _msdbContext.Patients.CountAsync(x =>
             x.IdPatient == prescriptionToAdd.patient.IdPatient && x.FirstName == prescriptionToAdd.patient.FirstName);
@@ -22,62 +22,30 @@ public class PatientRepository : IPatientRepository
         {
             Patient patient = new Patient()
             {
-                FirstName = prescriptionToAdd.patient.FirstName
+                FirstName = prescriptionToAdd.patient.FirstName,
+                LastName = prescriptionToAdd.patient.LastName
             };
             await _msdbContext.Patients.AddAsync(patient);
             await _msdbContext.SaveChangesAsync();
+            return patient.IdPatient;
         }
+        else
+        {
+            return prescriptionToAdd.patient.IdPatient;
+        }
+        
     }
 
     public async Task<ResultDTO> GetPatientInfo(int id)
     {
-
-
-        //TUTAJ NIE DZIALA!!!!!!!!!!!!
-        await using (var context = new MsdbContext())
-        {
-            var patient = await context.Patients
+        var patient = await _msdbContext.Patients
                 .Include(p => p.Prescriptions)
-                .ThenInclude(p2 => p2.Doctor)
+                .ThenInclude(p2 => p2.Doctors)
                 .Include(p => p.Prescriptions)
                 .ThenInclude(p => p.PrescriptionMedicaments)
-                .ThenInclude(pm => pm.Medicament)
+                .ThenInclude(pm => pm.Medicaments)
                 .FirstOrDefaultAsync(p => p.IdPatient == id);
-
-            // var patient = await _msdbContext.Patients
-            //     .Include(p => p.Prescriptions)
-            //     .ThenInclude(p => p.Doctors)
-            //     .Include(p => p.Prescriptions)
-            //     .ThenInclude(p => p.PrescriptionMedicaments)
-            //     .ThenInclude(pm => pm.Medicament)
-            //     .FirstOrDefaultAsync(p => p.IdPatient == id);
             
-            // await using var context = new MsdbContext();
-            // var patient = await context.Patients
-            //     .Include(p => p.Prescriptions)
-            //     .ThenInclude(p2 => p2.Doctor)
-            //     .Include(p => p.Prescriptions)
-            //     .ThenInclude(p2 => p2.PrescriptionMedicaments)
-            //     .ThenInclude(pm => pm.Medicament)
-            //     .FirstOrDefaultAsync(p => p.IdPatient == id);
-
-            
-            // var patient1 = await context.Patients
-            //     .Include(p => p.Prescriptions)
-            //     .FirstOrDefaultAsync(p => p.IdPatient == id);
-            //
-            // var patientWithDoctors = await context.Patients
-            //     .Include(p => p.Prescriptions)
-            //     .ThenInclude(p2 => p2.Doctor)
-            //     .FirstOrDefaultAsync(p => p.IdPatient == id);
-            //
-            // var patientWithMedicaments = await context.Patients
-            //     .Include(p => p.Prescriptions)
-            //     .ThenInclude(p2 => p2.PrescriptionMedicaments)
-            //     .ThenInclude(pm => pm.Medicament)
-            //     .FirstOrDefaultAsync(p => p.IdPatient == id);
-
-
             if (patient == null)
             {
                 return new ResultDTO(404, "Patient not found");
@@ -95,9 +63,9 @@ public class PatientRepository : IPatientRepository
                     DueDate = p.DueDate,
                     Medicaments = p.PrescriptionMedicaments.Select(pm => new MedicamentsToAdd()
                     {
-                        idMedicament = pm.Medicament.IdMedicament,
-                        Dose = pm.Dose,
-                        Description = pm.Medicament.Description
+                        idMedicament = pm.Medicaments.IdMedicament,
+                        Dose = pm.Dose.GetValueOrDefault(),
+                        Description = pm.Medicaments.Description
                     }).ToList(),
                     dOCTOR = new DoctorToAdd()
                     {
@@ -110,5 +78,4 @@ public class PatientRepository : IPatientRepository
             return new ResultDTO(200, "git", patientDto);
         }
     }
-
-}
+    

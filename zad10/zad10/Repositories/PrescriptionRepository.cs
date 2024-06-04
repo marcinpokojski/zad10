@@ -16,15 +16,15 @@ public class PrescriptionRepository : IPrescriptionRepository
     }
     public async  Task<int> AddNewPrescription(PrescriptionToAdd prescriptionToAdd)
     {
-        // if (prescriptionToAdd.DueDate < prescriptionToAdd.Date)
-        // {
-        //     return -1;
-        // }
+        if (prescriptionToAdd.DueDate < prescriptionToAdd.Date)
+        {
+            return -1;
+        }
 
         Prescription prescription = new Prescription()
             {
-                //Date = "2022-12-32"
-                //DueDate = prescriptionToAdd.DueDate,
+                Date = prescriptionToAdd.Date,
+                DueDate = prescriptionToAdd.DueDate,
                 IdPatient = prescriptionToAdd.patient.IdPatient,
                 IdDoctor = prescriptionToAdd.doctor.idDoctor
 

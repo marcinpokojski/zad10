@@ -17,7 +17,7 @@ public class PrescriptionService : IPrescriptionService
     }
     public async  Task<ResultDTO> AddPrescription(PrescriptionToAdd prescriptionToAdd)
     {
-         await _patientRepository.AddNewPatient(prescriptionToAdd);
+        var idPatient =  await _patientRepository.AddNewPatient(prescriptionToAdd);
         //true to git
         var ifMedicamentExist = await _medicamentRepository.IfMedicamentExist(prescriptionToAdd);
 
@@ -33,11 +33,15 @@ public class PrescriptionService : IPrescriptionService
             return new ResultDTO(404, "wiecej niz 10 lekow w recepcie");
         }
 
+        prescriptionToAdd.patient.IdPatient = idPatient;
         var result = await _prescriptionRepository.AddNewPrescription(prescriptionToAdd);
-
+        if (result == -1)
+        {
+            return new ResultDTO(404, "zle daty");
+        }
         if (result == 1)
         {
-            return new ResultDTO(200, "git");
+            return new ResultDTO(200, "ok");
         }
 
         return new ResultDTO(404, "blad przy dodawaniu");

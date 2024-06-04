@@ -19,7 +19,7 @@ public class PrescriptionController : ControllerBase
         var result = await _prescriptionService.AddPrescription(prescriptionToAdd);
         if (result.Code == 200)
         {
-            return Ok();
+            return Ok(result.Message);
         }
 
         return NotFound(result.Message);

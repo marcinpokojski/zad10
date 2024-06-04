@@ -4,6 +4,6 @@ namespace zad10.Repositories;
 
 public interface IPatientRepository
 {
-    Task AddNewPatient(PrescriptionToAdd prescriptionToAdd);
+    Task<int> AddNewPatient(PrescriptionToAdd prescriptionToAdd);
     Task<ResultDTO> GetPatientInfo(int id);
-}
+} 

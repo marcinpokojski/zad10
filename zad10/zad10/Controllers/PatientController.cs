@@ -3,7 +3,7 @@ using zad10.Services;
 
 namespace zad10.Controllers;
 
-[Microsoft.AspNetCore.Components.Route("api/patient")]
+
 [ApiController]
 public class PatientController : ControllerBase
 {
@@ -14,10 +14,10 @@ public class PatientController : ControllerBase
         _prescriptionService = prescriptionService;
     }
     [HttpGet]
-    [Route("{id}")]
+    [Route("api/patient/{id}")]
     public async Task<IActionResult> GetPatientInfo(int id)
     {
-        var result =await _prescriptionService.GetPatientInfo(id);
+        var result = await _prescriptionService.GetPatientInfo(id);
 
         if (result.Code == 200)
         {

@@ -1,23 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace zad10.Entities;
 
-public partial class Prescription
+public class Prescription
 {
+    [Key]
     public int IdPrescription { get; set; }
-
-    public DateOnly Date { get; set; }
-
-    public DateOnly DueDate { get; set; }
-
+    
+    [Required]
+    public DateTime Date { get; set; }
+    
+    [Required]
+    public DateTime DueDate { get; set; }
+    
     public int IdPatient { get; set; }
-
+    
     public int IdDoctor { get; set; }
-
-    public virtual Doctor IdDoctorNavigation { get; set; } = null!;
-
-    public virtual Patient IdPatientNavigation { get; set; } = null!;
-
-    public virtual ICollection<PrescriptionMedicament> PrescriptionMedicaments { get; set; } = new List<PrescriptionMedicament>();
+    
+    [ForeignKey(nameof(IdPatient))]
+    public Patient Patients { get; set; }
+    
+    [ForeignKey(nameof(IdDoctor))]
+    public Doctor Doctors { get; set; }
+    
+    public ICollection<PrescriptionMedicament> PrescriptionMedicaments { get; set; }
+    
 }

@@ -1,17 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace zad10.Entities;
 
-public partial class Medicament
+public class Medicament
 {
+    [Key]
     public int IdMedicament { get; set; }
-
-    public string Name { get; set; } = null!;
-
-    public string Description { get; set; } = null!;
-
-    public string Type { get; set; } = null!;
-
-    public virtual ICollection<PrescriptionMedicament> PrescriptionMedicaments { get; set; } = new List<PrescriptionMedicament>();
+    
+    [MaxLength(100)]
+    [Required]
+    public string Name { get; set; }
+    
+    [MaxLength(100)]
+    [Required]
+    public string Description { get; set; }
+    
+    [MaxLength(100)]
+    [Required]
+    public string Type { get; set; }
+    
+    public ICollection<PrescriptionMedicament> PrescriptionMedicaments { get; set; }
 }
